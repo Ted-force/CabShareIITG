@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const app = express();
-const port = 3000
+const port = process.env.PORT || 3000
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname,'./public')));
 app.set('views',path.join(__dirname,'./public/views'));
