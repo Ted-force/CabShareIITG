@@ -16,12 +16,20 @@ app.get('/', (req, res) => {
 
 var resultArray = [];
 
+function formatTime(hour, minute) {
+    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+}
+
 app.post('/add', (req,res) => {
     let temptime = req.body.time.split(':');
     const time2 = Number(temptime[0]) + 1 + ":" + Number(temptime[1]);
     const time3 = time2.toString();
     const time4 = Number(temptime[0]) - 1 + ":" + Number(temptime[1]);
-    const time5 = time4.toString();  
+    const time5 = time4.toString(); 
+    
+    const [hour, minute] = req.body.time.split(':').map(Number);
+    const timeStart = formatTime(hour - 1, minute);
+    const timeEnd = formatTime(hour + 1, minute);
 
     
 
@@ -36,7 +44,7 @@ app.post('/add', (req,res) => {
                             return console.log(err.message);
                         }
                         console.log("Your entry is saved");
-                    }).all(`SELECT name,phone,GroupSize,time,hostel FROM cabShare WHERE date=? AND time BETWEEN "${time5}" AND "${time3}" AND start=? AND destination=? AND gender=? AND phone!=?`,[req.body.date,  req.body.from, req.body.to, req.body.gender, req.body.phone],(err,rows) => {
+                    }).all(`SELECT name,phone,GroupSize,time,hostel FROM cabShare WHERE date=? AND time BETWEEN "${timeStart}" AND "${timeEnd}" AND start=? AND destination=? AND gender=? AND phone!=?`,[req.body.date,  req.body.from, req.body.to, req.body.gender, req.body.phone],(err,rows) => {
                         if(err) {
                             return console.log(err.message)
                         }
@@ -56,7 +64,7 @@ app.post('/add', (req,res) => {
               } else if(err) {
                   console.log(err.message);
               } else {
-                 db.all(`SELECT name,phone,GroupSize,time,hostel FROM cabShare WHERE date=? AND time BETWEEN "${time5}" AND "${time3}" AND start=? AND destination=? AND gender=? AND phone!=?`,[req.body.date, req.body.from, req.body.to, req.body.gender, req.body.phone],(err,rows) => {
+                 db.all(`SELECT name,phone,GroupSize,time,hostel FROM cabShare WHERE date=? AND time BETWEEN "${timeStart}" AND "${timeEnd}" AND start=? AND destination=? AND gender=? AND phone!=?`,[req.body.date, req.body.from, req.body.to, req.body.gender, req.body.phone],(err,rows) => {
                     if(err) {
                         return console.log(err.message)
                     }
@@ -84,7 +92,7 @@ app.post('/add', (req,res) => {
                             return console.log(err.message);
                         }
                         console.log("Your entry is saved");
-                    }).all(`SELECT name,phone,GroupSize,time,hostel FROM cabShare WHERE date=? AND time BETWEEN "${time5}" AND "${time3}" AND start=? AND destination=? AND phone!=?`,[req.body.date,  req.body.from, req.body.to, req.body.phone],(err,rows) => {
+                    }).all(`SELECT name,phone,GroupSize,time,hostel FROM cabShare WHERE date=? AND time BETWEEN "${timeStart}" AND "${timeEnd}" AND start=? AND destination=? AND phone!=?`,[req.body.date,  req.body.from, req.body.to, req.body.phone],(err,rows) => {
                         if(err) {
                             return console.log(err.message)
                         }
@@ -105,7 +113,7 @@ app.post('/add', (req,res) => {
               } else if(err) {
                   console.log(err.message);
               } else {
-                 db.all(`SELECT name,phone,GroupSize,time,hostel FROM cabShare WHERE date=? AND time BETWEEN "${time5}" AND "${time3}" AND start=? AND destination=? AND phone!=?`,[req.body.date, req.body.from, req.body.to, req.body.phone],(err,rows) => {
+                 db.all(`SELECT name,phone,GroupSize,time,hostel FROM cabShare WHERE date=? AND time BETWEEN "${timeStart}" AND "${timeEnd}" AND start=? AND destination=? AND phone!=?`,[req.body.date, req.body.from, req.body.to, req.body.phone],(err,rows) => {
                     if(err) {
                         return console.log(err.message)
                     }
@@ -172,6 +180,5 @@ function AutoDelete() {
      db.run(`DELETE FROM cabShare WHERE date < '${today}'`);
 }
 
-
-AutoDelete();
 CreateTable();
+AutoDelete();
